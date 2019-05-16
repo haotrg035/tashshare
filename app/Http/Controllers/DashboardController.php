@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Project;
 use App\Task;
+use App\ProjectsXUsers;
 
 class DashboardController extends Controller
 {
@@ -36,7 +37,7 @@ class DashboardController extends Controller
         if (!empty($joinedProjects)) {
             foreach ($joinedProjects as $key => $project) {
                 $managerIds[] = $project->project_manager_id;
-                $employeeNums[$project->project_id] = Task::where('project_id','=',$project->project_id)->count();
+                $employeeNums[$project->project_id] = ProjectsXUsers::where('project_id','=',$project->project_id)->count();
             }
         }
         $managers = User::find($managerIds) or null;
@@ -119,31 +120,31 @@ class DashboardController extends Controller
     public function searchProject(Request $request)
     {
         // $field = $request['project-search-field'];
-        $searchKey = trim(strtolower(($request['inp-project-search'])));
+        $searchKey = trim(mb_strtolower(($request['inp-project-search'])));
         if ($searchKey == '' || $searchKey == null) {
             return redirect(route('dashboard'));
         } else {
             $currUser = Auth::user();
 
             $projectJoinedIds = getJoinedProjectIds($currUser->user_id);
-            $joinedProjects = Project::whereIn('project_id', $projectJoinedIds)->whereRaw('LOWER(project_name) LIKE ?', "%{$searchKey}%")->get();
-
+            // $joinedProjects = Project::whereIn('project_id', $projectJoinedIds)->whereRaw('LOWER(project_name) LIKE ?', "%{$searchKey}%")->get();
+            $joinedProjects = Project::whereIn('project_id', $projectJoinedIds)->whereRaw('Lower(project_name) LIKE ?',"%${searchKey}%")->get();
             $managerIds = [];
             $employeeNums = [];
             if (!empty($joinedProjects)) {
                 foreach ($joinedProjects as $key => $project) {
                     $managerIds[] = $project->project_manager_id;
-                    $employeeNums[$project->project_id] = Task::where('project_id','=',$project->project_id)->count();
+                    $employeeNums[$project->project_id] = ProjectsXUsers::where('project_id','=',$project->project_id)->count();
                 }
             }
             $managers = User::find($managerIds) or null;
             return view('dashboard',[
                 'joinedProjects' => $joinedProjects,
-                // 'createdProjects' => $createdProjects,
                 'managers' => $managers,
                 'employeeNums' => $employeeNums,
                 'tasks' => $projectJoinedIds,
-                'currUser' => $currUser
+                'currUser' => $currUser,
+
             ]);
         }
     }

@@ -1,5 +1,9 @@
 @extends('master')
 @section('ContentArea')
+{{-- @php
+    use App\ProjectsXUsers;
+    echo dd(ProjectsXUsers::with('tasks')->get());
+@endphp --}}
 
 <div id="page-content-area" class="h-100 container p-0">
     <div class="container">
@@ -35,9 +39,8 @@
                     </div>
                 </div>
             </div>
-            <!-- project info left col -->
             <div class="col-md-4 px-0 px-md-2" >
-                <div class="mt-2 bg-white shadow-sm border " ">
+                <div class="mt-2 bg-white shadow-sm border ">
                     <h3 class="border-bottom p-2 d-flex justify-content-between">
                         <span>Nhân sự</span>
                         <a href="#modal-add-task" data-toggle="modal">
@@ -63,22 +66,32 @@
                                     </a>
                                     <div class="media-body">
                                         <h5>{{$users[$i]->user_fullname}}</h5>
-                                        {{ $task['task_pos']}}
+                                        {{ $task['tasks'][0]['task_pos']}}
                                     </div>
                                 </div>
                             </a>
                         </div>
                         <!-- !End Employee -->
                         @endfor
-
                     </div>
 
                 </div>
             </div>
-            <!-- project info right col -->
         </div>
+        <div class="row">
+            <div class="col bg-white mt-2 shadow-sm border">
+                <h3 class="border-bottom p-2 d-flex justify-content-between">
+                    <span>Công việc</span>
+                    <a href="#" data-toggle="modal">
+                        <i class="fa fa-plus text-success"  aria-hidden="true"></i>
+                    </a>
+                </h3>
+                <div id="tasks-area">
 
-    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- project info right col -->
 
     <div class="modal fade" id="modal-edit-project-detail" tabindex="-1" role="dialog" aria-labelledby="Chỉnh Sửa Project" aria-hidden="true">
         <div class="modal-dialog" role="document">

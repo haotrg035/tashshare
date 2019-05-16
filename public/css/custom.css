@@ -62,7 +62,10 @@ a:hover{
     z-index: 999;
 
 }
-
+#project-area{
+    max-height: 550px;
+    overflow-y: auto;
+}
 html {
     height: 100%;
   }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Project;
 use App\User;
+use App\ProjectsXUsers;
 use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +47,7 @@ class ProjectController extends Controller
     {
         $project = new Project;
         $task = new Task;
+        $pxu = new ProjectsXUsers;
 
         $project->project_name = $request['inp-project-title'];
         $project->project_detail = $request['inp-project-desc'];
@@ -55,10 +57,15 @@ class ProjectController extends Controller
         $project->project_manager_id = Auth::user()->user_id;
         $project->save();
 
-        $task->project_id = $project->project_id;
-        $task->user_id = $project->project_manager_id;
-        $task->task_detail = 'Quản Lý';
+        $pxu->project_id = $project->project_id;
+        $pxu->user_id = $project->project_manager_id;
+        $pxu->save();
+
+        $task->pxu_id = $pxu->pxu_id;
+        $task->task_detail = '';
+        $task->task_pos = 'Quản lý';
         $task->save();
+
 
         return redirect(route('dashboard'));
 
@@ -74,7 +81,7 @@ class ProjectController extends Controller
     public function show($id)
     {
         $project = Project::find($id);
-        $tasks = Task::where('project_id','=',$id)->get();
+        $tasks = ProjectsXUsers::with('tasks')->where('project_id',$id)->get();
         $userIds = getJoinedUserIds($id);
         $users = User::find($userIds);
         $manager = $users->where('user_id','=',$project->project_manager_id);
@@ -127,8 +134,11 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
-        Task::where('project_id',$id)->delete();
-        Project::where('project_id',$id)->delete();
+        $pxu_ids = ProjectsXUsers::where('project_id',$id)->get('pxu_id')->implode('pxu_id',',');
+        // return ($pxu_ids);
+        Task::where('pxu_id',$pxu_ids)->delete();
+        ProjectsXUsers::find($pxu_ids)->delete();
+        Project::find($id)->delete();
         return redirect()->route('dashboard');
     }
 

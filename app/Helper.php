@@ -1,6 +1,6 @@
 <?php
     use App\Task;
-
+    use App\ProjectsXUsers;
     function converDate($YMDdate)
     {
         $date = date_create($YMDdate);
@@ -15,7 +15,7 @@
      */
     function getJoinedProjectIds($user_id)
     {
-        $joinedProjectIds = Task::where('user_id','=',$user_id)->get('project_id')->implode('project_id',',');
+        $joinedProjectIds = ProjectsXUsers::where('user_id',$user_id)->get('project_id')->implode('project_id',',');
         return explode(',',$joinedProjectIds);
     }
 
@@ -27,7 +27,7 @@
      */
     function getJoinedUserIds($project_id)
     {
-        $joinedUserIds = Task::where('project_id','=',$project_id)->get('user_id')->implode('user_id',',');
+        $joinedUserIds = ProjectsXUsers::where('project_id','=',$project_id)->get('user_id')->implode('user_id',',');
         return explode(',',$joinedUserIds);
     }
 

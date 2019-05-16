@@ -1,18 +1,13 @@
 @extends('master')
 @section('ContentArea')
+{{-- {{dd($joinedProjects)}} --}}
 <div id="page-content-area" class="h-100 container p-0">
         <div class="bg-white border mt-2 shadow-sm">
             <header class=" p-2 d-flex align-items-center justify-content-between border-bottom">
             <form action="{{ route('dashboard.search')}}" method="get" class="mr-2" style="max-width:30rem">
-                    {{-- @csrf --}}
+                    @csrf
                     <div class="input-group">
-                        {{-- <div class="input-group-prepend">
-                            <select class="form-control border-right-0 rounded-0" name="project-search-field" id="project-search-field">
-                            <option value="0">Tất cả</option>
-                            <option value="1">Quản lý</option>
-                            <option value="2">Tham gia</option>
-                            </select>
-                        </div> --}}
+
                         <input type="text" name="inp-project-search" id="inp-project-search" placeholder="Tìm dự án..." class="form-control border-right-0" aria-describedby="prefixId" autocomplete="off">
                         <div class="input-group-append">
                             <button class="input-group-text bg-white border-left-0">
@@ -24,36 +19,35 @@
                 <a id="btn-add-project" class="btn border hover-gray"  href="#modal-add-project" data-toggle="modal" role="button"><i class="fa fa-plus" aria-hidden="true"></i><span class="d-none d-md-inline"> Thêm Dự Án</span></a>
             </header>
 
-            {{-- <div class="card-deck pt-3 pb-2 pr-2 pl-2"> --}}
-            <div class="row pt-3 pb-2 pr-3 pl-3">
+            <div id="project-area" class="row pt-3 pb-2 pr-3 pl-3">
                 @if (count($joinedProjects)>0)
                     @foreach ($joinedProjects as $project)
                     <div class="col-md-4">
-                            <a href="{{route('project.show',$project->project_id)}}" class=" card mb-3 card-ongoing text-dark rounded-0 border" >
-                                <div class="card-body p-1 p-md-3">
-                                    <h5 class="card-title text-truncate mb-0 mb-md-2 fw-600">{{$project->project_name}}</h5>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item pt-1 pb-1 text-muted">
-                                            <i class="fa fa-user-circle-o" aria-hidden="true"> </i><strong class="d-none d-md-inline"> Quản lý:</strong> {{$managers->find($project->project_manager_id)->user_fullname}}
-                                        </li>
-                                        <li class="list-group-item pt-1 pb-1 text-muted">
-                                            <i class="fa fa-calendar-times-o" aria-hidden="true"></i></i><strong class="d-none d-md-inline"> Ngày tạo:</strong> {{converDate($project->project_start_day)}}
-                                        </li>
-                                        <li class="list-group-item pt-1 pb-1 text-muted">
-                                            <i class="fa fa-calendar-times-o" aria-hidden="true"></i></i><strong class="d-none d-md-inline"> Hạn nộp:</strong> {{converDate($project->project_end_day)}}
-                                        </li>
-                                        <li class="list-group-item pt-1 pb-1 text-muted">
-                                                <i class="fa fa-user-circle" aria-hidden="true"></i></i><strong class="d-none d-md-inline"> Nhân lực:</strong> {{$employeeNums[$project->project_id]}}
-                                        </li>
-                                        <li class="list-group-item pt-3 pb-0">
-                                            <div class="progress">
-                                                <div class="progress-bar bg-primary font-weight-bold" role="progressbar" style="width: {{$project->process}}%;"
-                                                    aria-valuenow="{{$project->process}}" aria-valuemin="0" aria-valuemax="100">{{$project->process}}%</div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </a>
+                        <a href="{{route('project.show',$project->project_id)}}" class=" card mb-3 card-ongoing text-dark rounded-0 border" >
+                            <div class="card-body p-1 p-md-3">
+                                <h5 class="card-title text-truncate mb-0 mb-md-2 fw-600">{{$project->project_name}}</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item pt-1 pb-1 text-muted">
+                                        <i class="fa fa-user-circle-o" aria-hidden="true"> </i><strong class="d-none d-md-inline"> Quản lý:</strong> {{$managers->find($project->project_manager_id)->user_fullname}}
+                                    </li>
+                                    <li class="list-group-item pt-1 pb-1 text-muted">
+                                        <i class="fa fa-calendar-times-o" aria-hidden="true"></i></i><strong class="d-none d-md-inline"> Ngày tạo:</strong> {{converDate($project->project_start_day)}}
+                                    </li>
+                                    <li class="list-group-item pt-1 pb-1 text-muted">
+                                        <i class="fa fa-calendar-times-o" aria-hidden="true"></i></i><strong class="d-none d-md-inline"> Hạn nộp:</strong> {{converDate($project->project_end_day)}}
+                                    </li>
+                                    <li class="list-group-item pt-1 pb-1 text-muted">
+                                            <i class="fa fa-user-circle" aria-hidden="true"></i></i><strong class="d-none d-md-inline"> Nhân lực:</strong> {{$employeeNums[$project->project_id]}}
+                                    </li>
+                                    <li class="list-group-item pt-3 pb-0">
+                                        <div class="progress">
+                                            <div class="progress-bar bg-primary font-weight-bold" role="progressbar" style="width: {{$project->process}}%;"
+                                                aria-valuenow="{{$project->process}}" aria-valuemin="0" aria-valuemax="100">{{$project->process}}%</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </a>
                     </div>
                     @endforeach
                 @else

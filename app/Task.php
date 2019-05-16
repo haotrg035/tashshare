@@ -9,4 +9,5 @@ class Task extends Model
     protected $table = 'tasks';
     protected $primaryKey = 'task_id';
     public $timestamps = false;
+
 }
