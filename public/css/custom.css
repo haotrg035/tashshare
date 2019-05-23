@@ -66,6 +66,10 @@ a:hover{
     max-height: 550px;
     overflow-y: auto;
 }
+#task-area{
+    max-width: 100%;
+    overflow-x: auto;
+}
 html {
     height: 100%;
   }

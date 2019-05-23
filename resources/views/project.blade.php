@@ -39,38 +39,35 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 px-0 px-md-2" >
+            <div class="col-md-4 pl-0 pl-md-2 pr-0" >
                 <div class="mt-2 bg-white shadow-sm border ">
                     <h3 class="border-bottom p-2 d-flex justify-content-between">
                         <span>Nhân sự</span>
-                        <a href="#modal-add-task" data-toggle="modal">
-                            <i class="fa fa-plus text-success"  aria-hidden="true"></i>
+                        <a href="#modal-add-employee" data-toggle="modal">
+                            <i class="fa fa-user-plus text-success" aria-hidden="true"></i>
                         </a>
                     </h3>
                     <!-- Title -->
-                    <div style="min-height:190px; max-height:190px; overflow: auto;">
+                    <div class="list-group list-group-flush" style="min-height:190px; max-height:190px; overflow: auto;">
                         @for ($i = 0; $i < count($users); $i++)
                         @php
-                            $raw_task = $tasks->where('user_id',$users[$i]->user_id)->toArray();
-                            $task = [];
-                            foreach ($raw_task as $item) {
-                                $task = $item;
-                                break;
-                            }
+                            $pxu = ($pxu->where('user_id',$users[$i]->user_id)->get())[0];
                         @endphp
-                        <div class="my-1 border-bottom px-2">
-                            <a href="https://www.google.com">
-                                <div class="media hover-shadow">
-                                    <a class="d-flex " href="#">
-                                        <img width="25" src="https://cdn1.iconfinder.com/data/icons/freeline/32/account_friend_human_man_member_person_profile_user_users-512.png" alt="">
-                                    </a>
-                                    <div class="media-body">
-                                        <h5>{{$users[$i]->user_fullname}}</h5>
-                                        {{ $task['tasks'][0]['task_pos']}}
+
+                        <a href="https://www.google.com" class="d-flex justify-content-between align-items-center mb-1 list-group-item list-group-item-action">
+                            <div class="media action">
+                                <span class="d-flex justify-content-start">
+                                    <img width="30" src="https://cdn1.iconfinder.com/data/icons/freeline/32/account_friend_human_man_member_person_profile_user_users-512.png" alt="">
+                                    <div class="media-body d-flex align-items-center">
+                                        <div class="h2 m-0">{{$users[$i]->user_fullname}}</div>
                                     </div>
-                                </div>
-                            </a>
-                        </div>
+                                </span>
+                            </div>
+                            @if ($pxu->role == 1)
+                                <i class="fa fa-user-circle h3 text-primary" aria-hidden="true"></i>
+                            @endif
+                        </a>
+
                         <!-- !End Employee -->
                         @endfor
                     </div>
@@ -79,14 +76,46 @@
             </div>
         </div>
         <div class="row">
-            <div class="col bg-white mt-2 shadow-sm border">
+            <div class="col bg-white mt-2 shadow-sm border px-2">
                 <h3 class="border-bottom p-2 d-flex justify-content-between">
                     <span>Công việc</span>
-                    <a href="#" data-toggle="modal">
-                        <i class="fa fa-plus text-success"  aria-hidden="true"></i>
+                    <a href="#modal-add-task" data-toggle="modal">
+                        <i class="fa fa-plus-circle text-success"  aria-hidden="true"></i>
+
                     </a>
                 </h3>
-                <div id="tasks-area">
+                <div id="tasks-area" class="row py-2">
+                    <div class="col-md-3 mb-2">
+                        <a href="#" class="">
+                            <div class="card shadow-sm">
+                                <div class="card-body p-2 bg-primary rounded">{{-- task's background color --}}
+                                    <div class="card-title border-bottom bg-white p-1 rounded">
+                                        <div class="border-bottom overflow-hidden" style="max-height:22px;white-space: nowrap;overflow-y:hidden;text-overflow:ellipsis;">
+                                            <b class="task-title ">Chuẩn bị tài liệu chuẩn bị tài liệu</b>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <img class="task-user-img rounded" src="https://cdn1.iconfinder.com/data/icons/freeline/32/account_friend_human_man_member_person_profile_user_users-512.png" alt="" width="18px" height="18px">
+                                            <span>
+                                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                                <p class="d-inline">27/03/2019</p>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <div class="progress">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 33%;"
+                                                    aria-valuenow="33%" aria-valuemin="0" aria-valuemax="100">33%</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item "><span class="badge badge-success">&#10004;</span> Active item</li>
+                                        <li class="list-group-item">Item</li>
+                                        <li class="list-group-item">Disabled item</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
 
                 </div>
             </div>
@@ -145,10 +174,9 @@
 
             </div>
         </div>
-    </div> <!-- Edit Modal -->
+    </div> <!-- Edit project Modal -->
 
-    <!-- Modal -->
-    <div class="modal fade" id="modal-add-task" tabindex="-1" role="dialog" aria-labelledby="Thêm nhân sự" aria-hidden="true">
+    <div class="modal fade" id="modal-add-employee" tabindex="-1" role="dialog" aria-labelledby="Thêm nhân sự" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
@@ -172,7 +200,111 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div><!-- Modal add employee -->
+
+    <div class="modal fade" id="modal-add-task" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-light">
+                    <h5 class="modal-title">Thêm công việc</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" method="post">
+                        @csrf
+                        <div class="row">
+                            <div class="col-7 col-md-8 pr-1">
+                                <div class="form-group">
+                                    <label for="task_name">Tên công việc</label>
+                                    <input type="text" class="form-control" name="task_name" id="task_name">
+                                </div>
+                            </div>
+                            <div class="col-5 col-md-4 pl-0">
+                                <label for="task_deadline">Thời hạn</label>
+                                <input type="date" class="form-control pl-1 pr-0" name="task_deadline" id="task_deadline">
+                            </div>
+                        </div>
+                        <div id="form-group-employees" class="form-group border-bottom pb-3">
+                            <label for="pxu_id_name">Nhân viên phụ trách</label>
+                            <a class="" data-toggle="collapse" href="#available-employees" aria-expanded="false" aria-controls="avalable-employees">
+                                <input type="text" class="form-control" name="pxu_id_name" id="pxu_id_name" readonly placeholder="Chọn nhân viên">
+                                <input type="hidden" class="form-control" name="pxu_id" id="pxu_id" aria-describedby="helpId" placeholder="">
+                            </a>
+                            <div class="collapse px-2" id="available-employees">
+                                <div class="row mt-2">
+                                    <div class="col-6 mb-2 px-2">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <span class="available-employees-name">Nguyễn Văn A</span>
+                                            <input type="hidden" value="1" class="available-employees-id">
+                                        </a>
+                                    </div>
+                                    <div class="col-6 mb-2 px-2">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <span class="available-employees-name">Nguyễn Văn B</span>
+                                            <input type="hidden" value="2" class="available-employees-id">
+                                        </a>
+                                    </div>
+                                    <div class="col-6 mb-2 px-2">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <span class="available-employees-name">Nguyễn Thị C</span>
+                                            <input type="hidden" value="3" class="available-employees-id">
+                                        </a>
+                                    </div>
+                                    <div class="col-6 mb-2 px-2">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <span class="available-employees-name">Nguyễn Văn D</span>
+                                            <input type="hidden" value="4" class="available-employees-id">
+                                        </a>
+                                    </div>
+                                    {{-- End employee --}}
+                                </div>
+                            </div>{{-- end available employees area --}}
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="task_name">Mục tiêu</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="task_name" id="task_name" class="form-control" placeholder="Thêm mục tiêu">
+                                <div class="input-group-append">
+                                    <a class="btn btn-success text-light" id="btn-add-task">Thêm</a>
+                                </div>
+                            </div>
+                        </div>
+                        <ul id="area-add-tasks"class="list-group border rounded">
+                            <li class="list-group-item border-0">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="task_id_1" id="task_id_1" value="1" >
+                                    <label class="custom-control-label" for="task_id_1">Check this custom checkbox</label>
+                                </div>
+                            </li>
+                            <li class="list-group-item border-0">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck" name="example1">
+                                    <label class="custom-control-label" for="customCheck">Check this custom checkbox</label>
+                                </div>
+                            </li>
+                            <li class="list-group-item border-0">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="task_id_3" name="task_id_3">
+                                    <label class="custom-control-label" for="task_id_3">Check this custom checkbox</label>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-success">Lưu</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>{{-- Modal add task --}}
+
     <form method="POST" action="{{ route('project.destroy', ['id'=>$projectObj->project_id]) }}" id="fm-deleteProject">
         @csrf
         @method('DELETE')
@@ -184,10 +316,8 @@
     <script>
         $(document).ready(function () {
             window.addChosenClass = (element) => {
-
                $(element).toggleClass('chosen-user');
             }
-
             $('#modal-edit-project-detail').on('show.bs.modal', (e) => {;
                 $('#inp-project-title').val($('#project-detail-title').text());
                 $('#inp-project-desc').val($('#project-intro').text().trim());
@@ -201,8 +331,8 @@
                 }
             });
             let UserSearchData = {
-                   id:"{{$projectObj->project_id}}"
-               }
+                id:"{{$projectObj->project_id}}"
+            }
             $('#inp-user-search').keyup(function (e) {
                 UserSearchData.keyword = $('#inp-user-search').val();
                 $.ajaxSetup({
@@ -216,7 +346,6 @@
                     success: function (response) {
                         $('#employees-desk').html('');
                         if (response.length > 0) {
-                            console.log(response)
                             for (const user of response) {
                                 $('#employees-desk').append(
                                     '<a href="javascript:void(0)" onClick="addChosenClass(this)" class="col-12 col-md-4 pl-4 py-2">'
@@ -233,6 +362,29 @@
                     }
                 });
             });
+            // $('#form-group-employees').focusout(() => {
+            //     $('#available-employees').collapse('hide');
+            // })
+            $('#available-employees a').each((index,elem) => {
+                $(elem).click(function (e) {
+                    $('#pxu_id_name').val($(elem).find('span').text());
+                    $('#pxu_id').val($(elem).find('input').val());
+                    $('#available-employees').collapse('toggle');
+                });
+            })
+
+            $('#btn-add-task').click(function (e) {
+                e.preventDefault();
+                $('#area-add-tasks').append('<li class="list-group-item border-0">'
+                        +'<div class="custom-control custom-checkbox">'
+                            +'<input type="checkbox" class="custom-control-input" name="" id="" value="1" >'
+                            +'<label class="custom-control-label" for="task_id_1">'+$('')+'</label>'
+                        +'</div>'
+                    +'</li>'
+                );
+            });
+
+            // end
         });
     </script>
 @endsection

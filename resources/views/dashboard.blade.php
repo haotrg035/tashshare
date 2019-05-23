@@ -4,7 +4,7 @@
 <div id="page-content-area" class="h-100 container p-0">
         <div class="bg-white border mt-2 shadow-sm">
             <header class=" p-2 d-flex align-items-center justify-content-between border-bottom">
-            <form action="{{ route('dashboard.search')}}" method="get" class="mr-2" style="max-width:30rem">
+            <form action="{{ route('dashboard.search')}}" method="GET" class="mr-2" style="max-width:30rem">
                     @csrf
                     <div class="input-group">
 

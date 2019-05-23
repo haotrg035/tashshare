@@ -59,13 +59,8 @@ class ProjectController extends Controller
 
         $pxu->project_id = $project->project_id;
         $pxu->user_id = $project->project_manager_id;
+        $pxu->role = 1;
         $pxu->save();
-
-        $task->pxu_id = $pxu->pxu_id;
-        $task->task_detail = '';
-        $task->task_pos = 'Quản lý';
-        $task->save();
-
 
         return redirect(route('dashboard'));
 
@@ -82,6 +77,7 @@ class ProjectController extends Controller
     {
         $project = Project::find($id);
         $tasks = ProjectsXUsers::with('tasks')->where('project_id',$id)->get();
+        $pxu = ProjectsXUsers::where('project_id',$id);
         $userIds = getJoinedUserIds($id);
         $users = User::find($userIds);
         $manager = $users->where('user_id','=',$project->project_manager_id);
@@ -89,6 +85,7 @@ class ProjectController extends Controller
             'projectObj' => $project,
             'users' => $users,
             'manager' => $manager[0],
+            'pxu' => $pxu,
             'tasks' => $tasks,
             'currUser' => Auth::user()
             ]);
