@@ -13,6 +13,7 @@
 
 
 Route::group(['prefix' => '/'], function () {
+
     Route::get('/', function () {
         return redirect('dashboard');
     });
@@ -27,7 +28,12 @@ Route::group(['prefix' => '/'], function () {
 
 Route::resource('project','ProjectController');
 Route::any('project/search','ProjectController@searchUser')->name('project.search');
+Route::any('project/adduser','ProjectController@addUser')->name('project.adduser');
+Route::any('project/getuser','ProjectController@getProjectsUsers')->name('project.getuser')->middleware('register.ispost');
+Route::any('project/addtask','ProjectController@addTask')->name('project.addtask')->middleware('register.ispost');
+
 Route::any('userprojects', 'ProjectController@showUserProjects')->middleware('register.ispost');
+
 
 Route::name('auth.')->group(function(){
     Route::prefix('login')->group(function(){

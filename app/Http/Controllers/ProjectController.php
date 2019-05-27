@@ -77,15 +77,10 @@ class ProjectController extends Controller
     {
         $project = Project::find($id);
         $tasks = ProjectsXUsers::with('tasks')->where('project_id',$id)->get();
-        $pxu = ProjectsXUsers::where('project_id',$id);
-        $userIds = getJoinedUserIds($id);
-        $users = User::find($userIds);
-        $manager = $users->where('user_id','=',$project->project_manager_id);
+        $pxus = ProjectsXUsers::with('user')->where('project_id',$id)->get();
         return view('project',[
             'projectObj' => $project,
-            'users' => $users,
-            'manager' => $manager[0],
-            'pxu' => $pxu,
+            'pxus' => $pxus,
             'tasks' => $tasks,
             'currUser' => Auth::user()
             ]);
@@ -150,4 +145,29 @@ class ProjectController extends Controller
         return ($users);
     }
 
+    public function addUser(Request $request){
+        foreach ($request->input('userIds') as $userId) {
+            if (!(ProjectsXUsers::where('user_id',$userId)->count() > 0)) {
+                $pxu = new ProjectsXUsers();
+                $pxu->project_id = $request->input('project_id');
+                $pxu->user_id = $userId;
+                $pxu->role = 0;
+                $pxu->save();
+            }
+        }
+        $joinedUsers = ProjectsXUsers::with('user')->where('project_id',$request->input('project_id'))->get();
+        return $joinedUsers;
+    }
+    public function getProjectsUsers(Request $request){
+//        $userIds = ProjectsXUsers::where('project_id',$request->input('project_id'))->get('user_id')->toArray();
+        $joinedUsers = ProjectsXUsers::with('user')->where('project_id',$request->input('project_id'))->get();
+        return $joinedUsers;
+    }
+
+    public function addTask(Request $request)
+    {
+        $data = $request->all();
+
+        return 0;
+    }
 }
