@@ -4,7 +4,6 @@
         use App\ProjectsXUsers;
         echo dd(ProjectsXUsers::with('tasks')->get());
     @endphp --}}
-
     <div id="page-content-area" class="h-100 container p-0">
         <div class="container">
             <div class="row">
@@ -71,7 +70,7 @@
                                     </div>
 
                                     @if ($pxu->role == 1)
-                                    <i class="fa fa-user-circle h3 text-primary" aria-hidden="true"></i>
+                                        <i class="fa fa-user-circle h3 text-primary" aria-hidden="true"></i>
                                     @endif
                                 </a>
 
@@ -86,51 +85,61 @@
                 <div class="col bg-white mt-2 shadow-sm border px-2">
                     <h3 class="border-bottom p-2 d-flex justify-content-between">
                         <span>Công việc</span>
-                        <a href="#modal-add-task" data-toggle="modal">
+                        <a id="btn-modal-add-task" href="" data-toggle="modal">
                             <i class="fa fa-plus-circle text-success" aria-hidden="true"></i>
-
                         </a>
                     </h3>
-                    <div id="tasks-area" class="row py-2">
-                        <div class="col-md-3 mb-2">
-                            <a href="#" class="">
-                                <div class="card shadow-sm">
-                                    <div class="card-body p-2 bg-primary rounded">{{-- task's background color --}}
-                                        <div class="card-title border-bottom bg-white p-1 rounded">
-                                            <div class="border-bottom overflow-hidden"
-                                                 style="max-height:22px;white-space: nowrap;overflow-y:hidden;text-overflow:ellipsis;">
-                                                <b class="task-title ">Chuẩn bị tài liệu chuẩn bị tài liệu</b>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <img class="task-user-img rounded"
-                                                     src="https://cdn1.iconfinder.com/data/icons/freeline/32/account_friend_human_man_member_person_profile_user_users-512.png"
-                                                     alt="" width="18px" height="18px">
-                                                <span>
-                                                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                                <p class="d-inline">27/03/2019</p>
-                                            </span>
-                                            </div>
-                                        </div>
-                                        <ul class="list-group">
-                                            <li class="list-group-item">
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-success" role="progressbar"
-                                                         style="width: 33%;"
-                                                         aria-valuenow="33%" aria-valuemin="0" aria-valuemax="100">33%
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item "><span
-                                                        class="badge badge-success">&#10004;</span> Active item
-                                            </li>
-                                            <li class="list-group-item">Item</li>
-                                            <li class="list-group-item">Disabled item</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
 
+                    <div id="tasks-area" class="row py-2">
+                        @foreach($tasks as $task)
+                            <div class="col-md-3 mb-2">
+                                <a href="javascript:void(0)" data-task-id="{{$task['task_id']}}" data-task-pxu="{{$task['pxu_id']}}" class=""
+                                   onclick="openTaskToEdit(this)">
+                                    <div class="card shadow-sm">
+                                        <div class="card-body p-2 {{$task['process'] == 100 ? 'bg-success' : 'bg-secondary'}} rounded">{{-- task's background color --}}
+                                            <div class="card-title border-bottom bg-white p-1 rounded mb-0">
+                                                <div class="border-bottom overflow-hidden"
+                                                     style="max-height:22px;white-space: nowrap;overflow-y:hidden;text-overflow:ellipsis;">
+                                                    <b class="task-title">{{$task['task_name']}}</b>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="task-user">
+                                                        <img class="task-user-img rounded"
+                                                             src="https://cdn1.iconfinder.com/data/icons/freeline/32/account_friend_human_man_member_person_profile_user_users-512.png"
+                                                             alt="" width="18px" height="18px">
+                                                    </div>
+                                                    <span>
+                                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                                        <p class="d-inline task-deadline">{{converDate($task['task_end'])}}</p>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <ul class="list-group mt-2">
+{{--                                                <li class=" py-2 d-none" style="list-style-type: none">--}}
+{{--                                                    <div class="progress border">--}}
+{{--                                                        <div class="progress-bar bg-success" role="progressbar"--}}
+{{--                                                             style="width: {{$task['process']}}%;"--}}
+{{--                                                             aria-valuenow="{{$task['process']}}%" aria-valuemin="0"--}}
+{{--                                                             aria-valuemax="100">{{$task['process']}}%--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                </li>--}}
+                                                @if(!empty($subtasks[$task['task_id']]))
+                                                    @foreach($subtasks[$task['task_id']] as $subtask)
+                                                        <li class="list-group-item" data-subtask-id="{{$subtask['sub_id']}}">{{$subtask['sub_name']}}</li>
+                                                    @endforeach
+{{--                                                <li class="list-group-item "><span--}}
+{{--                                                            class="badge badge-success">&#10004;</span> Active item--}}
+{{--                                                </li>--}}
+{{--                                                <li class="list-group-item">Item</li>--}}
+{{--                                                <li class="list-group-item">Disabled item</li>--}}
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -242,25 +251,39 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="fm-add-task" action="#" method="post">
+                        <form id="fm-add-task" action="{{route('project.addtask')}}" method="post">
                             @csrf
-                            <div class="row">
-                                <div class="col-7 col-md-8 pr-1">
-                                    <div class="form-group">
-                                        <label for="task_name">Tên công việc</label>
-                                        <input type="text" class="form-control" name="task_name" id="task_name" required>
-                                    </div>
+                            <input type="hidden" name="project_id" value="{{$projectObj->project_id}}">
+                            <input type="hidden" name="task_id" value="">
+                            <div class="">
+                                <div class="form-group">
+                                    <label for="task_name">Tên công việc</label>
+                                    <input type="text" class="form-control" name="task_name" id="task_name"
+                                           required>
                                 </div>
-                                <div class="col-5 col-md-4 pl-0">
-                                    <label for="task_deadline">Thời hạn</label>
-                                    <input type="date" class="form-control pl-1 pr-0" name="task_deadline"
-                                           id="task_deadline" required>
+                            </div>
+                            <div class="row">
+                               <div class="col-6">
+                                   <div class="form-group">
+                                       <label for="task_state">Trạng thái</label>
+                                       <select class="custom-select" name="task_state" id="task_state">
+                                           <option value="0" selected>Đang thực hiện</option>
+                                           <option value="1">Hoàn thành</option>
+                                       </select>
+                                   </div>
+                               </div>
+                                <div class="col-6 ">
+                                    <div class="form-group">
+                                        <label for="task_deadline">Thời hạn</label>
+                                        <input type="date" class="form-control pl-1 pr-0" name="task_deadline" id="task_deadline" required>
+                                    </div>
                                 </div>
 
                             </div>
                             <div id="form-group-employees" class="form-group border-bottom pb-3">
-                                <label for="pxu_id_name">Nhân viên phụ trách</label>
-                                <a id="collapse-tasks" class="" data-toggle="collapse" href="#available-employees" aria-expanded="false"
+                                <label for="pxu_id_name">Người phụ trách</label>
+                                <a id="collapse-tasks" class="" data-toggle="collapse" href="#available-employees"
+                                   aria-expanded="false"
                                    aria-controls="avalable-employees">
                                     <input type="text" class="form-control" name="pxu_id_name" id="pxu_id_name" readonly
                                            placeholder="Chọn nhân viên" required>
@@ -269,23 +292,17 @@
                                 </a>
                                 <div class="collapse px-2" id="available-employees">
                                     <div id="list-available-employees" class="row mt-2">
-                                        <div class="col-6 mb-2 px-2">
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <span class="available-employees-name">Nguyễn Văn A</span>
-                                                <input type="hidden" value="1" class="available-employees-id">
-                                            </a>
-                                        </div>
 
                                         {{-- End employee --}}
                                     </div>
                                 </div>{{-- end available employees area --}}
                             </div>
-                            <div class="progress mb-3">
+                            <div id="task-progress" class="progress mb-3">
                                 <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25"
                                      aria-valuemin="0" aria-valuemax="100">25%
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div id="task-subtasks" class="form-group">
                                 <label for="task_name">Mục tiêu</label>
                                 <div class="input-group input-group-sm">
                                     <input type="text" name="sub_task_name" id="sub_task_name" class="form-control"
@@ -296,15 +313,15 @@
                                 </div>
                             </div>
                             <ul id="area-add-tasks" class="list-group border rounded">
-{{--                                <li class="list-group-item border-0 d-flex justify-content-between">--}}
-{{--                                    <div class="custom-control custom-checkbox">--}}
-{{--                                        <input type="checkbox" class="custom-control-input" name="task_id_1"--}}
-{{--                                               id="task_id_1" value="1">--}}
-{{--                                        <label class="subtask-content custom-control-label" for="task_id_1">Check this custom--}}
-{{--                                            checkbox</label>--}}
-{{--                                    </div>--}}
-{{--                                    <a href="#" class="badge badge-danger p-2">X</a>--}}
-{{--                                </li>--}}
+                                {{--                                <li class="list-group-item border-0 d-flex justify-content-between">--}}
+                                {{--                                    <div class="custom-control custom-checkbox">--}}
+                                {{--                                        <input type="checkbox" class="custom-control-input" name="task_id_1"--}}
+                                {{--                                               id="task_id_1" value="1">--}}
+                                {{--                                        <label class="subtask-content custom-control-label" for="task_id_1">Check this custom--}}
+                                {{--                                            checkbox</label>--}}
+                                {{--                                    </div>--}}
+                                {{--                                    <a href="#" class="badge badge-danger p-2">X</a>--}}
+                                {{--                                </li>--}}
 
                             </ul>
                             <div class="modal-footer">
@@ -317,6 +334,100 @@
                 </div>
             </div>
         </div>{{-- Modal add task --}}
+        <div class="modal fade" id="modal-edit-task" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-light">
+                        <h5 class="modal-title">Cập nhật công việc</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="fm-edit-task" action="{{route('project.edittask')}}" method="post">
+                            @csrf
+                            <input type="hidden" name="project_id" value="{{$projectObj->project_id}}">
+                            <input type="hidden" name="task_id" value="">
+                            <div class="">
+                                <div class="form-group">
+                                    <label for="task_name">Tên công việc</label>
+                                    <input type="text" class="form-control" name="task_name" id="edit_task_name"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="task_state">Trạng thái</label>
+                                        <select class="custom-select" name="task_state" id="edit_task_state">
+                                            <option value="0" selected>Đang thực hiện</option>
+                                            <option value="1">Hoàn thành</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6 ">
+                                    <div class="form-group">
+                                        <label for="task_deadline">Thời hạn</label>
+                                        <input type="date" class="form-control pl-1 pr-0" name="task_deadline" id="edit_task_deadline" required>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div id="edit_form-group-employees" class="form-group border-bottom pb-3">
+                                <label for="pxu_id_name">Người phụ trách</label>
+                                <a id="edit_collapse-tasks" class="" data-toggle="collapse" href="#edit_available-employees"
+                                   aria-expanded="false"
+                                   aria-controls="avalable-employees">
+                                    <input type="text" class="form-control" name="pxu_id_name" id="edit_pxu_id_name" readonly
+                                           placeholder="Chọn nhân viên" required>
+                                    <input type="hidden" class="form-control" name="pxu_id" id="edit_pxu_id"
+                                           aria-describedby="helpId" placeholder="" required>
+                                </a>
+                                <div class="collapse px-2" id="edit_available-employees">
+                                    <div id="edit_list-available-employees" class="row mt-2">
+
+                                        {{-- End employee --}}
+                                    </div>
+                                </div>{{-- end available employees area --}}
+                            </div>
+                            <div edit_="edit_task-progress" class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25"
+                                     aria-valuemin="0" aria-valuemax="100">25%
+                                </div>
+                            </div>
+                            <div id="edit_task-subtasks" class="form-group">
+                                <label for="task_name">Mục tiêu</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="sub_task_name" id="edit_sub_task_name" class="form-control"
+                                           placeholder="Thêm mục tiêu">
+                                    <div class="input-group-append">
+                                        <a class="btn btn-success text-light" id="edit_btn-add-subtask">Thêm</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul id="area-add-tasks" class="list-group border rounded">
+                                {{--                                <li class="list-group-item border-0 d-flex justify-content-between">--}}
+                                {{--                                    <div class="custom-control custom-checkbox">--}}
+                                {{--                                        <input type="checkbox" class="custom-control-input" name="task_id_1"--}}
+                                {{--                                               id="task_id_1" value="1">--}}
+                                {{--                                        <label class="subtask-content custom-control-label" for="task_id_1">Check this custom--}}
+                                {{--                                            checkbox</label>--}}
+                                {{--                                    </div>--}}
+                                {{--                                    <a href="#" class="badge badge-danger p-2">X</a>--}}
+                                {{--                                </li>--}}
+
+                            </ul>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                <button id="btn-edit-task" type="submit" class="btn btn-success">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>{{-- Modal edit task --}}
 
         <form method="POST" action="{{ route('project.destroy', ['id'=>$projectObj->project_id]) }}"
               id="fm-deleteProject">
@@ -328,19 +439,38 @@
 @section('private-js')
     <script>
         $(document).ready(function () {
+            let elemToHide = $('#task-progress,#task-subtasks,#area-add-tasks');
             let joinedUsers = {};
-
             window.addChosenClass = (element) => {
                 $(element).toggleClass('chosen-user');
-            }
-            window.removeSubTask = function(ele){
+            };
+            window.removeSubTask = function (ele) {
                 $(ele).parent().remove();
-            }
-            window.choseTasksUser = (elem)=>{
-                $('#pxu_id_name').val($(elem).find('span').text());
-                $('#pxu_id').val($(elem).find('input').val());
-                $('#available-employees').collapse('hide');
-            }
+            };
+            window.choseTasksUser = (elem) => {
+                $('#pxu_id_name, #pxu_id_name').val($(elem).find('span').text());
+                $('#pxu_id, #edit_pxu_id').val($(elem).find('input').val());
+                $('#available-employees, #edit_available-employees').collapse('hide');
+            };
+            window.openTaskToEdit = (elem) => {
+                $('#edit_task_name').val($(elem).find('.task-title').text());
+                $('#edit_task_deadline').val(LocalDateToStandard($(elem).find('.task-deadline').text()));
+                let pxu = $(elem).attr('data-task-pxu');
+                let username = '';
+                for (let i = 0; i <joinedUsers.length; i++) {
+                    if (joinedUsers[i].pxu_id == pxu){
+                        username = joinedUsers[i].user.user_fullname;
+                        break;
+                    }
+                }
+                $('#edit_pxu_id_name').val(username);
+                $('#edit_pxu_id').val(pxu);
+                let progress =$(elem).find('.progress .progress-bar').text();
+                $('#edit_task-progress .progress-bar').css('width',progress).text(progress);
+                $('#fm-edit-task input[name="task_id"]').val($(elem).attr('data-task-id'));
+                $('#modal-edit-task').modal('show');
+            };
+
             function getUsersFromServer() {
                 $.ajaxSetup({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
@@ -359,26 +489,31 @@
 
             async function getUsers() {
                 await getUsersFromServer();
-                $('#list-available-employees').html('');
-                for (const pxu of joinedUsers){
-                    $('#list-available-employees').append( '<div class="col-6 mb-2 px-2" onclick="choseTasksUser(this)">'
+                $('#list-available-employees,#edit_list-available-employees').html('');
+                for (const pxu of joinedUsers) {
+                    $('#list-available-employees,#edit_list-available-employees').append('<div class="col-6 mb-2 px-2" onclick="choseTasksUser(this)">'
                         + '<a href="javascript:void(0)"  class="list-group-item list-group-item-action">'
-                        + '<span class="available-employees-name">'+pxu.user.user_fullname+'</span>'
-                        + '<input type="hidden" value="'+pxu.user.user_id+'" class="available-employees-id">'
+                        + '<span class="available-employees-name">' + pxu.user.user_fullname + '</span>'
+                        + '<input type="hidden" value="' + pxu.user.user_id + '" class="available-employees-id">'
                         + '</a>'
                         + '</div>'
                     )
                 }
             }
 
-
+            $('#btn-modal-add-task').click(function (e) {
+                if (!elemToHide.hasClass('d-none')) {
+                    elemToHide.addClass('d-none');
+                }
+                $('#pxu_id_name, #pxu_id').val('');
+                $('#modal-add-task').modal('show');
+            });
             $('#modal-edit-project-detail').on('show.bs.modal', (e) => {
-                ;
                 $('#inp-project-title').val($('#project-detail-title').text());
                 $('#inp-project-desc').val($('#project-intro').text().trim());
                 $('#inp-project-detail-start').val("{{$projectObj->project_start_day}}");
                 $('#inp-project-detail-end').val("{{$projectObj->project_end_day}}");
-            })
+            });
             $('#delProjectBtn').click(function (e) {
                 e.preventDefault();
                 if (confirm('Bạn có chắc muốn xóa Project này?')) {
@@ -387,7 +522,7 @@
             });
             let UserSearchData = {
                 id: "{{$projectObj->project_id}}"
-            }
+            };
             $('#inp-user-search').keyup(function (e) {
                 UserSearchData.keyword = $('#inp-user-search').val();
                 $.ajaxSetup({
@@ -417,23 +552,19 @@
                     }
                 });
             });
-
             $('#list-available-employees > div > a').each((index, elem) => {
                 $(elem).click(function (e) {
-                    console.log(elem)
                     $('#pxu_id_name').val($(elem).find('span').text());
                     $('#pxu_id').val($(elem).find('input').val());
                     $('#available-employees').collapse('toggle');
                 });
-            })
-
+            });
 
 
             $('#btn-add-subtask').click(function (e) {
                 e.preventDefault();
                 let subTaskName = $('#sub_task_name').val().trim();
-                let subTaskLength
-                if (subTaskName != ''){
+                if (subTaskName != '') {
                     $('#area-add-tasks').append('<li  class="sub-task list-group-item border-0 d-flex justify-content-between">'
                         + '<div class="subtask-content">' + subTaskName + '</div>'
                         + '<a href="#" onclick="removeSubTask(this)" class="badge badge-danger d-flex align-items-center p-2">X</a>'
@@ -464,16 +595,16 @@
                             getUsers();
                             $('#employees-area').html('');
                             for (const pxu of response) {
-                                $('#employees-area').append('<a href="https://www.google.com" data-userid="'+pxu.user.user_id+'" class="d-flex justify-content-between align-items-center mb-1 list-group-item list-group-item-action">'
+                                $('#employees-area').append('<a href="https://www.google.com" data-userid="' + pxu.user.user_id + '" class="d-flex justify-content-between align-items-center mb-1 list-group-item list-group-item-action">'
                                     + '<div class="media action">'
                                     + '<span class="d-flex justify-content-start">'
                                     + '<img width="30" src="https://cdn1.iconfinder.com/data/icons/freeline/32/account_friend_human_man_member_person_profile_user_users-512.png">'
                                     + '<div class="media-body d-flex align-items-center">'
-                                    + '<div class="h2 m-0">'+pxu.user.user_fullname+'</div>'
+                                    + '<div class="h2 m-0">' + pxu.user.user_fullname + '</div>'
                                     + '</div>'
                                     + '</span>'
                                     + '</div>'
-                                    + ((pxu.role > 0) ?'<i class="fa fa-user-circle h3 text-primary" aria-hidden="true"></i>' :'')
+                                    + ((pxu.role > 0) ? '<i class="fa fa-user-circle h3 text-primary" aria-hidden="true"></i>' : '')
                                     + '</a>'
                                 )
                             }
@@ -485,35 +616,6 @@
                 } else {
                     alert('Vui lòng chọn người dùng cần thêm!');
                 }
-            })
-
-
-            $("form#fm-add-task").submit(function(e){
-                e.preventDefault(e);
-                if ($('#pxu_id').val().trim() == ''){
-                    alert('Vui lòng chọn nhân viên!')
-                    return false;
-                }
-                let data = {
-                    task_name:$('#task_name').val(),
-                    task_end_day:$('#task_deadline').val(),
-                    pxu_id:$('#pxu_id').val()
-                }
-                let subTasks = [];
-                for (const subtask of $('#area-add-tasks li')){
-                    subTasks.push($(subtask).find('.subtask-content').html());
-                }
-                data.task_subtasks = subTasks;
-
-                $.ajax({
-                    type: 'POST',
-                    url: "{{route('project.addtask')}}",
-                    data: data,
-                    dataType: 'json',
-                    success: function (respone) {
-                        console.log(respone);
-                    }
-                })
             });
             getUsers();
         });

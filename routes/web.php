@@ -31,6 +31,7 @@ Route::any('project/search','ProjectController@searchUser')->name('project.searc
 Route::any('project/adduser','ProjectController@addUser')->name('project.adduser');
 Route::any('project/getuser','ProjectController@getProjectsUsers')->name('project.getuser')->middleware('register.ispost');
 Route::any('project/addtask','ProjectController@addTask')->name('project.addtask')->middleware('register.ispost');
+Route::any('project/edittask','ProjectController@editTask')->name('project.edittask')->middleware('register.ispost');
 
 Route::any('userprojects', 'ProjectController@showUserProjects')->middleware('register.ispost');
 

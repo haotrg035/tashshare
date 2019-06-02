@@ -1,5 +1,5 @@
 <div id="page-right-side" class="col-lg-10 ">
-    <div class="container bg-white border-bottom shadow-sm">
+    <div class="container bg-dark border-bottom text-light shadow-sm">
         <nav class="nav justify-content-end">
             <div class="dropdown">
                     <a class="nav-link dropdown-toggle" id="noti-menu" data-toggle="dropdown" aria-haspopup="true"

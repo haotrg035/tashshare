@@ -10,8 +10,14 @@ class Project extends Model
     protected $primaryKey = 'project_id';
     public $timestamps = false;
 
-    // public function PXU()
-    // {
-    //     return $this->hasMany('App\ProjectsXUsers', 'project_id', 'project_id');
-    // }
+     public function pxu()
+     {
+         return $this->hasMany('App\ProjectsXUsers', 'project_id', 'project_id');
+     }
+
+     public function tasks(){
+         return $this->hasManyThrough('App\Task','App\ProjectsXUsers','project_id','pxu_id','project_id');
+     }
+
+
 }

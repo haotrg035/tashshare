@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Project;
+use App\SubTask;
 use App\User;
 use App\ProjectsXUsers;
 use App\Task;
@@ -76,12 +77,23 @@ class ProjectController extends Controller
     public function show($id)
     {
         $project = Project::find($id);
-        $tasks = ProjectsXUsers::with('tasks')->where('project_id',$id)->get();
-        $pxus = ProjectsXUsers::with('user')->where('project_id',$id)->get();
+        $tasks = Project::with('tasks')->find($id)->getRelations()['tasks']->toArray();
+        $subtasks = [];
+
+        usort($tasks,function($a, $b){
+        $time1 = strtotime($a['task_end']);
+        $time2 = strtotime($b['task_end']);
+        return ($time1 - $time2);
+        });
+        foreach ($tasks as $task) {
+            $subtasks[$task['task_id']] = SubTask::where('task_id',$task['task_id'])->get()->toArray();
+        }
+        $pxus = ProjectsXUsers::with('user')->get();
         return view('project',[
             'projectObj' => $project,
             'pxus' => $pxus,
             'tasks' => $tasks,
+            'subtasks' => $subtasks,
             'currUser' => Auth::user()
             ]);
     }
@@ -167,7 +179,26 @@ class ProjectController extends Controller
     public function addTask(Request $request)
     {
         $data = $request->all();
+        $newtask = new Task();
+        $newtask->pxu_id = $data['pxu_id'];
+        $newtask->task_name = $data['task_name'];
+        $newtask->task_end = $data['task_deadline'];
+        $newtask->process = $data['task_state'] == 1 ? 100 : 0;
 
-        return 0;
+        $newtask->save();
+        return redirect()->back();
+    }
+
+    public function editTask(Request $request){
+        $data = $request->all();
+        $task = Task::find($data['task_id']);
+        $task->task_name = $data['task_name'];
+        $task->task_end = $data['task_deadline'];
+        $task->process = $data['task_state'] == 1 ? 100 : 0;
+        if (!empty($data['subtasks'])){
+
+        }
+//        update project process
+        return response()->json($data);
     }
 }

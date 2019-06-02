@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubTask extends Model
 {
-    protected $table = 'sub_task';
+    protected $table = 'sub_tasks';
     protected $primaryKey = 'sub_id';
     public $timestamps = false;
 

@@ -15,4 +15,8 @@
         ISODate = d.getFullYear()+'-'+month+'-'+date;
         return ISODate
     }
+    function LocalDateToStandard(date) {
+        date = date.split('/');
+        return date[2]+'-'+date[1]+'-'+date[0];
+    }
 </script>

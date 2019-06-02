@@ -14,7 +14,9 @@ class ProjectsXUsers extends Model
     {
         return $this->hasMany('App\Task', 'pxu_id', 'pxu_id');
     }
-
+    public function subtasks(){
+        return $this->hasManyThrough('App\SubTask','App\Task','pxu_id','task_id','pxu_id');
+    }
     public function project()
     {
         return $this->belongsTo('App\Project', 'project_id', 'project_id');
