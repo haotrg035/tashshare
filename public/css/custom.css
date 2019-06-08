@@ -84,6 +84,12 @@ html {
 body {
     min-height: 100%;
 }
+.btn-task-remove{
+    position: absolute;
+    top: 0px;
+    right: 1rem;
+    z-index: 999;
+}
 @media screen and (max-width:768px){
     html {
         height: auto;

@@ -23,7 +23,7 @@
                 @if (count($joinedProjects)>0)
                     @foreach ($joinedProjects as $project)
                     <div class="col-md-4">
-                        <a href="{{route('project.show',$project->project_id)}}" class=" card mb-3 card-ongoing text-dark rounded-0 border" >
+                        <a href="{{route('project.show',$project->project_id)}}" class=" card mb-3 {{$project->project_process == 100? ' card-complete ':' card-ongoing '}} text-dark rounded-0 border" >
                             <div class="card-body p-1 p-md-3">
                                 <h5 class="card-title text-truncate mb-0 mb-md-2 fw-600">{{$project->project_name}}</h5>
                                 <ul class="list-group list-group-flush">

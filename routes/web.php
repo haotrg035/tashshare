@@ -29,9 +29,12 @@ Route::group(['prefix' => '/'], function () {
 Route::resource('project','ProjectController');
 Route::any('project/search','ProjectController@searchUser')->name('project.search');
 Route::any('project/adduser','ProjectController@addUser')->name('project.adduser');
+Route::any('project/deluser','ProjectController@delUser')->name('project.deluser');
 Route::any('project/getuser','ProjectController@getProjectsUsers')->name('project.getuser')->middleware('register.ispost');
 Route::any('project/addtask','ProjectController@addTask')->name('project.addtask')->middleware('register.ispost');
 Route::any('project/edittask','ProjectController@editTask')->name('project.edittask')->middleware('register.ispost');
+Route::any('project/deltask','ProjectController@delTask')->name('project.deltask')->middleware('register.ispost');
+
 
 Route::any('userprojects', 'ProjectController@showUserProjects')->middleware('register.ispost');
 

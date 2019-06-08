@@ -68,7 +68,9 @@
                                             </div>
                                         </span>
                                     </div>
-
+                                    @if ($currPXU == $managerPXU )
+                                        <i class="fa fa-remove btn-remove-user h3 text-danger" aria-hidden="true"></i>
+                                    @endif
                                     @if ($pxu->role == 1)
                                         <i class="fa fa-user-circle h3 text-primary" aria-hidden="true"></i>
                                     @endif
@@ -83,8 +85,14 @@
             </div>
             <div class="row">
                 <div class="col bg-white mt-2 shadow-sm border px-2">
-                    <h3 class="border-bottom p-2 d-flex justify-content-between">
+                    <h3 class="border-bottom p-2 d-flex justify-content-between align-items-center">
                         <span>Công việc</span>
+                        <span class="progress progress-bar-striped border " style="min-width: 150px; height: 20px">
+                            <div class="progress-bar bg-success text-light" role="progressbar" style="width: {{$projectObj->project_process}}%;"
+                                 aria-valuenow="{{$projectObj->project_process}}"
+                                 aria-valuemin="0" aria-valuemax="100">Tiến độ {{$projectObj->project_process}}%
+                            </div>
+                        </span>
                         <a id="btn-modal-add-task" href="" data-toggle="modal">
                             <i class="fa fa-plus-circle text-success" aria-hidden="true"></i>
                         </a>
@@ -93,7 +101,16 @@
                     <div id="tasks-area" class="row py-2">
                         @foreach($tasks as $task)
                             <div class="col-md-3 mb-2">
-                                <a href="javascript:void(0)" data-task-id="{{$task['task_id']}}" data-task-pxu="{{$task['pxu_id']}}" class=""
+                                @if ($currPXU == $managerPXU)
+                                    <a href="javascript:void(0)" onclick="remove_task(this)"
+                                       class="btn-task-remove rounded py-1 px-2 rounded-circle bg-danger text-white">
+                                        <i class="fa fa-remove" aria-hidden="true"></i>
+                                    </a>
+                                @endif
+
+                                <a href="javascript:void(0)" data-task-id="{{$task['task_id']}}"
+                                   data-task-process="{{$task['process']}}" data-task-pxu="{{$task['pxu_id']}}"
+                                   class="task-card position-relative"
                                    onclick="openTaskToEdit(this)">
                                     <div class="card shadow-sm">
                                         <div class="card-body p-2 {{$task['process'] == 100 ? 'bg-success' : 'bg-secondary'}} rounded">{{-- task's background color --}}
@@ -115,24 +132,12 @@
                                                 </div>
                                             </div>
                                             <ul class="list-group mt-2">
-{{--                                                <li class=" py-2 d-none" style="list-style-type: none">--}}
-{{--                                                    <div class="progress border">--}}
-{{--                                                        <div class="progress-bar bg-success" role="progressbar"--}}
-{{--                                                             style="width: {{$task['process']}}%;"--}}
-{{--                                                             aria-valuenow="{{$task['process']}}%" aria-valuemin="0"--}}
-{{--                                                             aria-valuemax="100">{{$task['process']}}%--}}
-{{--                                                        </div>--}}
-{{--                                                    </div>--}}
-{{--                                                </li>--}}
                                                 @if(!empty($subtasks[$task['task_id']]))
                                                     @foreach($subtasks[$task['task_id']] as $subtask)
-                                                        <li class="list-group-item" data-subtask-id="{{$subtask['sub_id']}}">{{$subtask['sub_name']}}</li>
+                                                        <li class="list-group-item"
+                                                            data-subtask-id="{{$subtask['sub_id']}}">{{$subtask['sub_name']}}</li>
                                                     @endforeach
-{{--                                                <li class="list-group-item "><span--}}
-{{--                                                            class="badge badge-success">&#10004;</span> Active item--}}
-{{--                                                </li>--}}
-{{--                                                <li class="list-group-item">Item</li>--}}
-{{--                                                <li class="list-group-item">Disabled item</li>--}}
+                                                    <li class="list-group-item">Disabled item</li>
                                                 @endif
                                             </ul>
                                         </div>
@@ -263,19 +268,20 @@
                                 </div>
                             </div>
                             <div class="row">
-                               <div class="col-6">
-                                   <div class="form-group">
-                                       <label for="task_state">Trạng thái</label>
-                                       <select class="custom-select" name="task_state" id="task_state">
-                                           <option value="0" selected>Đang thực hiện</option>
-                                           <option value="1">Hoàn thành</option>
-                                       </select>
-                                   </div>
-                               </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="task_state">Trạng thái</label>
+                                        <select class="custom-select" name="task_state" id="task_state">
+                                            <option value="0" selected>Đang thực hiện</option>
+                                            <option value="1">Hoàn thành</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-6 ">
                                     <div class="form-group">
                                         <label for="task_deadline">Thời hạn</label>
-                                        <input type="date" class="form-control pl-1 pr-0" name="task_deadline" id="task_deadline" required>
+                                        <input type="date" class="form-control pl-1 pr-0" name="task_deadline"
+                                               id="task_deadline" required>
                                     </div>
                                 </div>
 
@@ -322,7 +328,6 @@
                                 {{--                                    </div>--}}
                                 {{--                                    <a href="#" class="badge badge-danger p-2">X</a>--}}
                                 {{--                                </li>--}}
-
                             </ul>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -369,29 +374,31 @@
                                 <div class="col-6 ">
                                     <div class="form-group">
                                         <label for="task_deadline">Thời hạn</label>
-                                        <input type="date" class="form-control pl-1 pr-0" name="task_deadline" id="edit_task_deadline" required>
+                                        <input type="date" class="form-control pl-1 pr-0" name="task_deadline"
+                                               id="edit_task_deadline" required>
                                     </div>
                                 </div>
 
                             </div>
                             <div id="edit_form-group-employees" class="form-group border-bottom pb-3">
                                 <label for="pxu_id_name">Người phụ trách</label>
-                                <a id="edit_collapse-tasks" class="" data-toggle="collapse" href="#edit_available-employees"
+                                <a id="edit_collapse-tasks" class="" data-toggle="collapse"
+                                   href="#edit_available-employees"
                                    aria-expanded="false"
                                    aria-controls="avalable-employees">
-                                    <input type="text" class="form-control" name="pxu_id_name" id="edit_pxu_id_name" readonly
+                                    <input type="text" class="form-control" name="pxu_id_name" id="edit_pxu_id_name"
+                                           readonly
                                            placeholder="Chọn nhân viên" required>
                                     <input type="hidden" class="form-control" name="pxu_id" id="edit_pxu_id"
                                            aria-describedby="helpId" placeholder="" required>
                                 </a>
                                 <div class="collapse px-2" id="edit_available-employees">
                                     <div id="edit_list-available-employees" class="row mt-2">
-
                                         {{-- End employee --}}
                                     </div>
                                 </div>{{-- end available employees area --}}
                             </div>
-                            <div edit_="edit_task-progress" class="progress mb-3">
+                            <div edit_="edit_task-progress" class="progress mb- d-none">
                                 <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25"
                                      aria-valuemin="0" aria-valuemax="100">25%
                                 </div>
@@ -407,16 +414,6 @@
                                 </div>
                             </div>
                             <ul id="area-add-tasks" class="list-group border rounded">
-                                {{--                                <li class="list-group-item border-0 d-flex justify-content-between">--}}
-                                {{--                                    <div class="custom-control custom-checkbox">--}}
-                                {{--                                        <input type="checkbox" class="custom-control-input" name="task_id_1"--}}
-                                {{--                                               id="task_id_1" value="1">--}}
-                                {{--                                        <label class="subtask-content custom-control-label" for="task_id_1">Check this custom--}}
-                                {{--                                            checkbox</label>--}}
-                                {{--                                    </div>--}}
-                                {{--                                    <a href="#" class="badge badge-danger p-2">X</a>--}}
-                                {{--                                </li>--}}
-
                             </ul>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -424,7 +421,6 @@
                             </div>
                         </form>
                     </div>
-
                 </div>
             </div>
         </div>{{-- Modal edit task --}}
@@ -439,6 +435,8 @@
 @section('private-js')
     <script>
         $(document).ready(function () {
+            let currPXU = {{$currPXU}};
+            let managerPXU = {{$managerPXU}};
             let elemToHide = $('#task-progress,#task-subtasks,#area-add-tasks');
             let joinedUsers = {};
             window.addChosenClass = (element) => {
@@ -448,28 +446,91 @@
                 $(ele).parent().remove();
             };
             window.choseTasksUser = (elem) => {
-                $('#pxu_id_name, #pxu_id_name').val($(elem).find('span').text());
+                $('#pxu_id_name, #edit_pxu_id_name').val($(elem).find('span').text());
                 $('#pxu_id, #edit_pxu_id').val($(elem).find('input').val());
                 $('#available-employees, #edit_available-employees').collapse('hide');
             };
+            window.remove_task = function (elem) {
+                if (confirm('Bạn muốn xóa công việc này?')) {
+                    data = {
+                        project_id: {{$projectObj->project_id}},
+                        task_id: $(elem).siblings('.task-card').attr('data-task-id')
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        async: false,
+                        url: "{{route('project.deltask')}}",
+                        data: data,
+                        dataType: 'json',
+                        success: function (respone) {
+                            $(elem).parents('.col-md-3').fadeOut()
+                        }
+                    })
+                }
+            };
+            $('.btn-remove-user').click(function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (confirm('Xóa người dùng này đồng thời xóa các công việc họ đang đảm nhận?')) {
+                    data = {user_id: $(this).parents('a').attr('data-userid')};
+                    $.ajax({
+                        type: 'POST',
+                        async: false,
+                        url: "{{route('project.deluser')}}",
+                        data: data,
+                        dataType: 'json',
+                        success: function (respone) {
+                        }
+                    })
+                    $(this).parents('a').remove();
+                }
+                ;
+            });
             window.openTaskToEdit = (elem) => {
                 $('#edit_task_name').val($(elem).find('.task-title').text());
                 $('#edit_task_deadline').val(LocalDateToStandard($(elem).find('.task-deadline').text()));
                 let pxu = $(elem).attr('data-task-pxu');
                 let username = '';
-                for (let i = 0; i <joinedUsers.length; i++) {
-                    if (joinedUsers[i].pxu_id == pxu){
+                for (let i = 0; i < joinedUsers.length; i++) {
+                    if (joinedUsers[i].pxu_id == pxu) {
                         username = joinedUsers[i].user.user_fullname;
                         break;
                     }
                 }
                 $('#edit_pxu_id_name').val(username);
                 $('#edit_pxu_id').val(pxu);
-                let progress =$(elem).find('.progress .progress-bar').text();
-                $('#edit_task-progress .progress-bar').css('width',progress).text(progress);
+                let progress = $(elem).find('.progress .progress-bar').text();
+                $('#edit_task-progress .progress-bar').css('width', progress).text(progress);
                 $('#fm-edit-task input[name="task_id"]').val($(elem).attr('data-task-id'));
+                if ($(elem).attr('data-task-process') == 100) {
+                    $('#fm-edit-task #edit_task_state').val(1);
+                } else {
+                    $('#fm-edit-task #edit_task_state').val(0);
+                }
+                let oldstask = $(elem).find('.list-group-item');
+                $('#fm-edit-task #area-add-tasks').html('');
+                for (const task of oldstask) {
+                    $('#fm-edit-task #area-add-tasks').append('<li  class="sub-task list-group-item border-0 d-flex justify-content-between">'
+                        + '<input class="border-0 w-100" type="text" name="old_sub_task[' + $(task).attr('data-subtask-id') + ']" value="' + $(task).text() + '">'
+                        + '<a href="#" onclick="removeSubTask(this)" class="badge badge-danger d-flex align-items-center p-2">X</a>'
+                        + '</li>'
+                    );
+                }
                 $('#modal-edit-task').modal('show');
             };
+            let subtask_count = 0;
+            $('#edit_btn-add-subtask').click(function (e) {
+                e.preventDefault();
+                let subTaskName = $('#edit_sub_task_name').val().trim();
+                if (subTaskName != '') {
+                    $('#fm-edit-task #area-add-tasks').append('<li  class="sub-task list-group-item border-0 d-flex justify-content-between">'
+                        + '<input class="border-0 w-100" type="text" name="new_sub_tasks[' + subtask_count + ']" value="' + subTaskName + '">'
+                        + '<a href="#" onclick="removeSubTask(this)" class="badge badge-danger d-flex align-items-center p-2">X</a>'
+                        + '</li>'
+                    );
+                    subtask_count++;
+                }
+            });
 
             function getUsersFromServer() {
                 $.ajaxSetup({
@@ -494,7 +555,7 @@
                     $('#list-available-employees,#edit_list-available-employees').append('<div class="col-6 mb-2 px-2" onclick="choseTasksUser(this)">'
                         + '<a href="javascript:void(0)"  class="list-group-item list-group-item-action">'
                         + '<span class="available-employees-name">' + pxu.user.user_fullname + '</span>'
-                        + '<input type="hidden" value="' + pxu.user.user_id + '" class="available-employees-id">'
+                        + '<input class="w-100 border-0" type="hidden" value="' + pxu.pxu_id + '" class="available-employees-id">'
                         + '</a>'
                         + '</div>'
                     )
@@ -560,20 +621,6 @@
                 });
             });
 
-
-            $('#btn-add-subtask').click(function (e) {
-                e.preventDefault();
-                let subTaskName = $('#sub_task_name').val().trim();
-                if (subTaskName != '') {
-                    $('#area-add-tasks').append('<li  class="sub-task list-group-item border-0 d-flex justify-content-between">'
-                        + '<div class="subtask-content">' + subTaskName + '</div>'
-                        + '<a href="#" onclick="removeSubTask(this)" class="badge badge-danger d-flex align-items-center p-2">X</a>'
-                        + '</li>'
-                    );
-                }
-
-            });
-
             $('#btn-add-employee').click(function (e) {
                 let data = {
                     userIds: [],
@@ -582,6 +629,7 @@
                 $('#employees-desk').find('.chosen-user').each((key, value) => {
                     data.userIds.push($(value).attr('id').split('_')[1]);
                 });
+
                 if (data.userIds.length > 0) {
                     $.ajaxSetup({
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
@@ -604,6 +652,7 @@
                                     + '</div>'
                                     + '</span>'
                                     + '</div>'
+                                    + ((currPXU === managerPXU) ? '<i class="fa fa-remove btn-remove-user h3 text-danger" aria-hidden="true"></i>' : '')
                                     + ((pxu.role > 0) ? '<i class="fa fa-user-circle h3 text-primary" aria-hidden="true"></i>' : '')
                                     + '</a>'
                                 )
